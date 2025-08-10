@@ -106,9 +106,9 @@ To remove enterprise context and test without it:
 │
 ├── services/                  # Mock microservices architecture
 │   ├── user-service/          # Java/Spring Boot service
-│   │   ├── .claude/           # Service-specific context
+│   │   ├── CLAUDE.md           # Service-specific context
 │   ├── order-service/         # Demonstrates cross-service patterns
-│   │   ├── .claude/           # Service-specific context
+│   │   ├── CLAUDE.md           # Service-specific context
 │
 ├── docs/                      # Architecture documentation
 │   ├── architecture-overview.md
