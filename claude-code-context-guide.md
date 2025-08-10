@@ -567,25 +567,25 @@ flowchart TD
 
 Track these metrics to evaluate your context management effectiveness:
 
+NOTE FOR REVIEWERS: THIS IS PLACEHOLDER MATERIAL.
+
 ### Context Efficiency Metrics
 
-- **Token usage per feature**: Aim for < 50k tokens per feature implementation
-- **Compaction frequency**: Target < 2 compactions per 4-hour session
-- **Context hit rate**: > 80% of prompts should work without "file not found"
+- **Token usage per feature**: Aim for < Xk tokens per feature implementation
+- **Compaction frequency**: Target < X compactions per X-hour session
+- **Context hit rate**: > X% of prompts should work without "file not found"
 
 ### Development Velocity Metrics
 
-- **Onboarding time**: New developers productive within 2 hours
-- **Feature completion**: 2x faster with optimized context vs. naive approach
-- **Error rate**: < 10% of generated code requires architectural corrections
+- **Onboarding time**: New developers productive within X hours
+- **Feature completion**: X times faster with optimized context vs. naive approach
+- **Error rate**: < X% of generated code requires architectural corrections
 
 ### Quality Indicators
 
-- **Pattern consistency**: 95% of generated code follows established patterns
+- **Pattern consistency**: Code follows established patterns
 - **Security compliance**: Zero security violations in generated code
 - **Test coverage**: Generated tests maintain or improve coverage
-
-Use `/cost` regularly to monitor token usage and adjust strategies based on these metrics.
 
 ## Next Steps
 
