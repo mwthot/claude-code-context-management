@@ -104,16 +104,11 @@ To remove enterprise context and test without it:
 ├── samples/                    # Sample configuration files
 │   └── enterprise-CLAUDE.md    # Enterprise-level memory template
 │
-├── services/                  # Microservices architecture
+├── services/                  # Mock microservices architecture
 │   ├── user-service/          # Java/Spring Boot service
-│   │   ├── CLAUDE.md          # Service-specific context
-│   │   └── .claude/           # Service-specific settings
+│   │   ├── .claude/           # Service-specific context
 │   ├── order-service/         # Demonstrates cross-service patterns
-│
-├── infrastructure/           # Deployment configurations
-│   ├── docker-compose.yml    # Local development setup
-│   ├── kong.yml              # API gateway configuration
-│   └── kubernetes/           # Production deployment specs
+│   │   ├── .claude/           # Service-specific context
 │
 ├── docs/                      # Architecture documentation
 │   ├── architecture-overview.md
