@@ -6,7 +6,6 @@ Claude Code works best when context is small and focused. However, enterprise co
 
 The challenge resembles working with a skilled contractor who can only hold a limited amount of project information in working memory at any given time. Without systematic context management, you will end up repeatedly explaining the same architectural patterns, coding standards, and service boundaries. At the same time, Claude loses track of the broader system design that should inform its code suggestions.
 
-
 Enterprise-scale Claude Code usage requires mastering three interconnected solutions that work together to maintain coherent and compliant development sessions:
 
 * **Context optimization strategies** address the fundamental scarcity problem. Context is like a precious resource that needs careful allocation across competing demands: current feature work, architectural understanding, coding standards, and debugging information. Poor context management leads to Claude making suggestions that technically work but violate architectural principles or ignore established patterns.
@@ -23,7 +22,7 @@ This [GitHub repo](https://github.com/mwthot/claude-code-context-management) con
 - Complete dependnecy mapping
 - Configurations for settings, hooks, subagents, and custom commands. 
 
-Examples in this guide reflect files from the GitHub repo. Clone the repository to follow along: 
+The patterns in this guide have working implementations you can explore and adapt. Clone the repository to follow along: 
 
 ```
 git clone https://github.com/anthropics/claude-code-context-management # Placeholder link
@@ -48,6 +47,27 @@ The memory hierarchy consists of four levels, each serving a distinct purpose in
 * **Local Memory** (imported via `@~/.claude/my-project-instructions.md`) handles personal project-specific preferences without cluttering shared documentation.
 
 Memory files serve a dual purpose. They provide Claude with context while documenting architectural decisions for human developers. This justifies the maintenance overhead while ensuring information stays current and valuable.
+
+```mermaid 
+graph TD
+    subgraph "Memory Loading Order"
+        A[Enterprise Memory<br/>/etc/claude-code/CLAUDE.md] -->|Inherits| B[Project Memory<br/>./CLAUDE.md]
+        B -->|Inherits| C[Service Memory<br/>./services/*/CLAUDE.md]
+        C -->|Imports| D[Local Memory<br/>~/.claude/my-instructions.md]
+    end
+    
+    subgraph "Scope & Purpose"
+        A -.->|Organization-wide| E[Security Policies<br/>Coding Standards<br/>Compliance Rules]
+        B -.->|Project-wide| F[Architecture Patterns<br/>Service Boundaries<br/>Team Workflows]
+        C -.->|Service-specific| G[Tech Stack<br/>Domain Logic<br/>Testing Patterns]
+        D -.->|Personal| H[Individual Preferences<br/>Local Configs<br/>Personal Shortcuts]
+    end
+    
+    style A fill:#f9f,stroke:#333,stroke-width:4px
+    style B fill:#bbf,stroke:#333,stroke-width:4px
+    style C fill:#bfb,stroke:#333,stroke-width:4px
+    style D fill:#fbb,stroke:#333,stroke-width:4px
+```
 
 #### Creating Effective Memory Files
 
