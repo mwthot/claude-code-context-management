@@ -7,8 +7,8 @@ The platform follows a microservices architecture with clear service boundaries:
 Web UI (React/Next.js) → API Gateway (Kong) → Services
     ↓                           ↓                 ↓
 CDN (CloudFlare)        Rate Limiting          User Service
-SSL Termination         Authentication         Product Service
-Static Assets           Load Balancing         Order Service
+SSL Termination         Authentication         Order Service
+Static Assets           Load Balancing         
 Payment Service
 
 ## Development Principles

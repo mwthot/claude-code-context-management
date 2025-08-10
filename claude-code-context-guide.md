@@ -2,7 +2,7 @@
 
 ## Understanding the Core Challenge
 
-Claude Code works best when context is small and focused. However, enterprise codebases are large and complicated. Without a strategy, Claude gives locally correct but globally inadequate suggestions.
+Claude Code works best when context is small and focused. However, enterprise codebases are large and complicated. Without a strategy, Claude gives locally correct but globally incorrect suggestions.
 
 The challenge resembles working with a skilled contractor who can only hold a limited amount of project information in working memory at any given time. Without systematic context management, you will end up repeatedly explaining the same architectural patterns, coding standards, and service boundaries. At the same time, Claude loses track of the broader system design that should inform its code suggestions.
 
@@ -18,19 +18,19 @@ Enterprise-scale Claude Code usage requires mastering three interconnected solut
 
 This [GitHub repo](https://github.com/mwthot/claude-code-context-management) contains a simulated e-commerce platform with: 
 
-- 2 mocked services 
-- Complete dependnecy mapping
+- Two simulated services 
+- Dependency mapping
 - Configurations for settings, hooks, subagents, and custom commands. 
 
 The patterns in this guide have working implementations you can explore and adapt. Clone the repository to follow along: 
 
 ```
-git clone https://github.com/anthropics/claude-code-context-management # Placeholder link
+git clone https://github.com/anthropics/claude-code-context-management # NOTE TO REVIEWERS: PLACEHOLDER LINK
 ```
 
 ## Workflow Overview
 
-Effective context management is an iterative process. Start with foundational patterns, measure their impact, and progressively optimize based on your team's specific needs and codebase characteristics. The goal is context management that makes your team more productive.
+Effective context management is an iterative process. Start with foundational patterns, measure their impact, and progressively optimize based on your team's specific needs and codebase characteristics. 
 
 ### The Foundation: Memory Hierarchy
 
@@ -165,7 +165,7 @@ When ensuring consistency across components:
 
 #### Directory References
 
-Directory references (`@services/`) provide file listings without loading contents, perfect for exploration:
+Directory references (`@services/`) provide file listings without loading contents. This is suitable for exploration:
 
 ```
 > @src/main/java/ what's the package structure?
@@ -177,7 +177,7 @@ Directory references (`@services/`) provide file listings without loading conten
 
 ### Context Compaction for Extended Sessions
 
-Context compaction resembles how developers naturally summarize progress when transitioning between work sessions. The key lies in crafting instructions that preserve architectural context while focusing on current objectives.
+Context compaction resembles how developers summarize progress when transitioning between work sessions. Craft instructions that preserve architectural context while focusing on current objectives.
 
 #### Manual Compaction Strategy
 
@@ -191,7 +191,7 @@ Provide specific instructions about what to preserve:
 
 #### Automated Compaction Configuration
 
-Configure hooks in your settings for consistent compaction behavior:
+Configure [hooks](https://docs.anthropic.com/en/docs/claude-code/hooks-guide) in your settings for consistent compaction behavior:
 
 ```json
 {
@@ -216,7 +216,6 @@ Configure hooks in your settings for consistent compaction behavior:
 1. **Be Specific**: "Preserve authentication changes" is better than "keep recent work"
 2. **Include Context Types**: Mention code changes, decisions made, and patterns discovered
 3. **Reference Key Files**: "Keep context from @services/user-service/auth/" helps Claude maintain focus
-4. **Set Frequency**: Configure auto-compaction at 80% context usage for optimal performance
 
 ### Subagent Delegation for Specialized Tasks
 
@@ -279,7 +278,7 @@ Delegate complex analysis with clear objectives:
 > Use the security-reviewer subagent to audit the authentication changes for OWASP compliance and potential vulnerabilities.
 ```
 
-#### When to Use Subagents
+#### Subagent Best Practices
 
 - **Complex Analysis**: Database schema changes, security audits, performance optimization
 - **Isolated Tasks**: Test writing, documentation generation, refactoring
@@ -301,8 +300,6 @@ Establish broad permissions that work across your technology stack:
       "Read(*.{java,js,ts,py,go,yaml,json,md})",
       "Bash(npm run:*)", 
       "Bash(mvn:*)", 
-      "Bash(pytest:*)",
-      "Bash(go test:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",
@@ -348,13 +345,13 @@ Layer technology-specific settings at the service level:
 }
 ```
 
-This separation ensures Java formatters don't run on TypeScript files and npm commands aren't available in Python services.
+This separation ensures Java formatters don't run on TypeScript files and npm commands aren't available in non-Java services.
 
 ## Advanced Patterns
 
 ### Custom Commands for Complex Operations
 
-Create reusable commands that automate complex context management tasks. Store these in `.claude/commands/`:
+Create reusable [slash commands](https://docs.anthropic.com/en/docs/claude-code/slash-commands#custom-slash-commands) that automate complex context management tasks. Store these in `.claude/commands/`:
 
 #### Dependency Mapping Command
 
@@ -381,6 +378,7 @@ Generate a comprehensive dependency map including:
    - Map environment variables
 
 Create both JSON output and a Mermaid diagram showing interaction patterns and criticality levels.
+...
 ```
 
 Usage: `/map-dependencies`
@@ -399,6 +397,7 @@ Create a learning path for a new $ARGUMENTS developer:
 1. Start with least-dependent services
 2. Focus on high-impact integration points
 3. Suggest safe first contributions
+...
 ```
 
 Usage: `/onboard-developer backend` or `/onboard-developer frontend`
@@ -441,7 +440,7 @@ Structure onboarding as a journey through your codebase:
 
 ## Key Tradeoffs and Decisions
 
-Every context management technique involves tradeoffs. Understanding them is critical for making informed decisions.
+Every context management technique involves tradeoffs. Understanding them is important for making informed decisions.
 
 ### Memory vs. Token Efficiency
 
@@ -480,6 +479,8 @@ Every context management technique involves tradeoffs. Understanding them is cri
 - Delegate implementation details, retain design control
 
 ## Context Management Summary
+
+NOTE FOR REVIEWERS: THIS GRAPH WOULD BE REVISED/IMPROVED FOR BETTER READABILITY
 
 ```mermaid 
 flowchart TD

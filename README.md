@@ -1,6 +1,6 @@
 # Claude Code Context Management
 
-This repository demonstrates practical patterns for managing Claude Code in enterprise environments. For detailed explanations, see the [full documentation ](claude-code-context-guide.md).
+This repository demonstrates practical patterns for managing Claude Code in enterprise environments. For detailed explanations, see the [full documentation](claude-code-context-guide.md).
 
 ## Quick Start
 
@@ -63,7 +63,7 @@ The sample enterprise CLAUDE.md establishes organization-wide standards:
 
 Once installed, these standards will influence all Claude Code sessions across any project on your machine. 
 
-> **IMPORTANT**: Remember to remove the mock CLAUDE.md enterprise file when you're done with this demonstration. 
+❗ **IMPORTANT**: Remember to remove the mock `CLAUDE.md` enterprise file when you're done with this demonstration. 
 
 ### Testing Enterprise Context
 
@@ -104,13 +104,13 @@ To remove enterprise context and test without it:
 ├── samples/                    # Sample configuration files
 │   └── enterprise-CLAUDE.md    # Enterprise-level memory template
 │
-├── services/                   # Microservices architecture
+├── services/                  # Microservices architecture
 │   ├── user-service/          # Java/Spring Boot service
 │   │   ├── CLAUDE.md          # Service-specific context
 │   │   └── .claude/           # Service-specific settings
 │   ├── order-service/         # Demonstrates cross-service patterns
 │
-├── infrastructure/            # Deployment configurations
+├── infrastructure/           # Deployment configurations
 │   ├── docker-compose.yml    # Local development setup
 │   ├── kong.yml              # API gateway configuration
 │   └── kubernetes/           # Production deployment specs
@@ -125,7 +125,7 @@ To remove enterprise context and test without it:
 
 ## Key Demonstrations
 
-### Memory Hierarchy in Action
+### Memory Hierarchy
 
 Explore how context flows from enterprise to service level:
 
@@ -146,7 +146,7 @@ claude
 
 ### Dependency Mapping
 
-Generate a comprehensive dependency map:
+Generate a comprehensive dependency map in JSON and Mermaid:
 
 ```bash
 # Use the custom command
@@ -193,7 +193,7 @@ Work across service boundaries effectively:
 
 ## Learn More
 
-- **Comprehensive Guide**: See [Claude Code Context Management](/claude-code-context-guide.md)  for detailed explanations and theory
-- **Claude Code Documentation**: [docs.anthropic.com/claude-code](https://docs.anthropic.com/en/docs/claude-code)
+- [Claude Code Context Management](/claude-code-context-guide.md) for detailed explanations
+- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
 
 
