@@ -1,0 +1,367 @@
+{
+  "metadata": {
+    "generated_at": "2025-08-09",
+    "architecture_pattern": "microservices",
+    "total_services": 4,
+    "implemented_services": 2,
+    "analysis_scope": "E-Commerce Platform"
+  },
+  "services": {
+    "user-service": {
+      "status": "partially_implemented",
+      "implementation_completeness": 20,
+      "technology_stack": {
+        "language": "java",
+        "framework": "spring-boot",
+        "version": "3.2+",
+        "database": "postgresql",
+        "migration_tool": "flyway"
+      },
+      "endpoints": {
+        "implemented": [],
+        "planned": [
+          {
+            "method": "GET",
+            "path": "/api/v1/users/{userId}",
+            "purpose": "User validation",
+            "consumers": ["order-service"]
+          }
+        ]
+      },
+      "database": {
+        "name": "user_service_dev",
+        "host": "localhost",
+        "port": 5432,
+        "tables": ["users", "user_profiles"],
+        "relationships": {
+          "users_to_user_profiles": {
+            "type": "one_to_one",
+            "foreign_key": "user_profiles.user_id -> users.id"
+          }
+        }
+      },
+      "dependencies": {
+        "external_references": ["order-service references user_id"],
+        "infrastructure": ["postgresql", "redis", "rabbitmq"]
+      }
+    },
+    "order-service": {
+      "status": "fully_implemented",
+      "implementation_completeness": 95,
+      "technology_stack": {
+        "language": "java",
+        "framework": "spring-boot",
+        "version": "3.2+",
+        "database": "postgresql",
+        "migration_tool": "flyway"
+      },
+      "endpoints": {
+        "implemented": [
+          {
+            "method": "POST",
+            "path": "/api/v1/orders",
+            "purpose": "Create order",
+            "dependencies": ["user-service validation"]
+          }
+        ]
+      },
+      "database": {
+        "name": "orderdb",
+        "host": "localhost",
+        "port": 5432,
+        "tables": ["orders", "order_items"],
+        "relationships": {
+          "orders_to_order_items": {
+            "type": "one_to_many",
+            "foreign_key": "order_items.order_id -> orders.id",
+            "cascade": "DELETE CASCADE"
+          }
+        },
+        "external_references": [
+          {
+            "table": "orders",
+            "column": "user_id",
+            "references": "user-service.users.id",
+            "type": "logical_foreign_key"
+          },
+          {
+            "table": "order_items",
+            "column": "product_id", 
+            "references": "product-service.products.id",
+            "type": "logical_foreign_key"
+          }
+        ]
+      },
+      "service_dependencies": {
+        "synchronous": [
+          {
+            "target": "user-service",
+            "endpoint": "GET /api/v1/users/{userId}",
+            "purpose": "User validation",
+            "implementation": "RestTemplate",
+            "timeout_strategy": "fail_fast",
+            "circuit_breaker": false
+          }
+        ],
+        "asynchronous": []
+      },
+      "dependencies": {
+        "infrastructure": ["postgresql", "redis", "rabbitmq"]
+      }
+    },
+    "product-service": {
+      "status": "not_implemented",
+      "implementation_completeness": 0,
+      "technology_stack": {
+        "language": "unknown",
+        "framework": "unknown",
+        "database": "unknown"
+      },
+      "endpoints": {
+        "planned": [
+          {
+            "method": "GET",
+            "path": "/api/v1/products",
+            "purpose": "Product catalog"
+          },
+          {
+            "method": "GET", 
+            "path": "/api/v1/products/{productId}",
+            "purpose": "Product details for orders",
+            "consumers": ["order-service"]
+          }
+        ]
+      },
+      "database": {
+        "expected_tables": ["products", "categories", "inventory"],
+        "external_references": ["order-service references product_id"]
+      },
+      "dependencies": {
+        "infrastructure": ["postgresql", "redis", "rabbitmq"]
+      }
+    },
+    "payment-service": {
+      "status": "not_implemented", 
+      "implementation_completeness": 0,
+      "technology_stack": {
+        "language": "unknown",
+        "framework": "unknown",
+        "database": "unknown"
+      },
+      "endpoints": {
+        "planned": [
+          {
+            "method": "POST",
+            "path": "/api/v1/payments",
+            "purpose": "Process payment",
+            "consumers": ["order-service"]
+          }
+        ]
+      },
+      "database": {
+        "expected_tables": ["payments", "transactions", "refunds"]
+      },
+      "dependencies": {
+        "infrastructure": ["postgresql", "redis", "rabbitmq"]
+      }
+    }
+  },
+  "communication_patterns": {
+    "synchronous": {
+      "protocol": "HTTP/REST",
+      "client_library": "RestTemplate",
+      "authentication": "JWT",
+      "current_flows": [
+        {
+          "from": "order-service",
+          "to": "user-service", 
+          "endpoint": "GET /api/v1/users/{userId}",
+          "purpose": "User validation during order creation",
+          "criticality": "high",
+          "fallback_strategy": "fail_request"
+        }
+      ],
+      "planned_flows": [
+        {
+          "from": "order-service",
+          "to": "product-service",
+          "endpoint": "GET /api/v1/products/{productId}",
+          "purpose": "Product validation and inventory check",
+          "criticality": "high"
+        },
+        {
+          "from": "order-service", 
+          "to": "payment-service",
+          "endpoint": "POST /api/v1/payments",
+          "purpose": "Payment processing",
+          "criticality": "critical"
+        }
+      ]
+    },
+    "asynchronous": {
+      "protocol": "AMQP/RabbitMQ",
+      "message_broker": "rabbitmq:3-management",
+      "current_flows": [],
+      "planned_flows": [
+        {
+          "from": "order-service",
+          "to": "user-service",
+          "event": "OrderCreated",
+          "purpose": "User notification"
+        },
+        {
+          "from": "payment-service",
+          "to": "order-service", 
+          "event": "PaymentConfirmed",
+          "purpose": "Order fulfillment trigger"
+        },
+        {
+          "from": "user-service",
+          "to": "product-service",
+          "event": "UserProfileUpdated", 
+          "purpose": "Personalization updates"
+        }
+      ]
+    }
+  },
+  "infrastructure_dependencies": {
+    "shared_infrastructure": {
+      "postgresql": {
+        "version": "15",
+        "port": 5432,
+        "databases": {
+          "user_service_dev": "user-service",
+          "orderdb": "order-service", 
+          "ecommerce_dev": "development_shared"
+        },
+        "criticality": "critical"
+      },
+      "redis": {
+        "version": "7-alpine",
+        "port": 6379,
+        "purpose": ["caching", "session_storage"],
+        "criticality": "high"
+      },
+      "rabbitmq": {
+        "version": "3-management",
+        "ports": [5672, 15672],
+        "purpose": "asynchronous_messaging",
+        "criticality": "high"
+      },
+      "kong": {
+        "version": "3.4",
+        "ports": [8000, 8001],
+        "purpose": "api_gateway",
+        "features": ["rate_limiting", "jwt_auth", "routing"],
+        "criticality": "critical"
+      }
+    },
+    "deployment": {
+      "docker_compose": {
+        "environment": "development",
+        "services_defined": ["postgres", "redis", "rabbitmq", "kong"]
+      },
+      "kubernetes": {
+        "environment": "production",
+        "namespace": "ecommerce",
+        "configurations": ["user-service"],
+        "features": ["auto_scaling", "health_checks", "secrets_management"]
+      }
+    }
+  },
+  "data_consistency_patterns": {
+    "strong_consistency": [
+      {
+        "scenario": "User validation during order creation",
+        "services": ["order-service", "user-service"],
+        "mechanism": "synchronous_api_call"
+      }
+    ],
+    "eventual_consistency": [
+      {
+        "scenario": "User profile updates for personalization",
+        "services": ["user-service", "product-service"],
+        "mechanism": "event_driven",
+        "acceptable_delay": "5_minutes"
+      }
+    ],
+    "transactional_boundaries": [
+      {
+        "service": "order-service",
+        "scope": ["orders", "order_items"],
+        "mechanism": "database_transaction"
+      }
+    ]
+  },
+  "criticality_levels": {
+    "critical": [
+      {
+        "dependency": "postgresql",
+        "impact": "complete_system_failure"
+      },
+      {
+        "dependency": "kong_api_gateway", 
+        "impact": "no_external_access"
+      }
+    ],
+    "high": [
+      {
+        "dependency": "user_service_validation",
+        "impact": "no_order_creation"
+      },
+      {
+        "dependency": "redis_cache",
+        "impact": "performance_degradation"
+      }
+    ],
+    "medium": [
+      {
+        "dependency": "rabbitmq",
+        "impact": "no_async_processing"
+      }
+    ]
+  },
+  "deployment_order": {
+    "infrastructure_first": [
+      "postgresql",
+      "redis", 
+      "rabbitmq",
+      "kong"
+    ],
+    "services_order": [
+      "user-service",
+      "product-service",
+      "payment-service", 
+      "order-service"
+    ],
+    "rationale": "Order service depends on all other services for complete functionality"
+  },
+  "circular_dependencies": {
+    "detected": [],
+    "potential_risks": [
+      {
+        "scenario": "If user-service needs order history for profile",
+        "services": ["user-service", "order-service"],
+        "mitigation": "Use async events or separate read model"
+      }
+    ]
+  },
+  "missing_implementations": [
+    {
+      "service": "product-service",
+      "blocking": ["order product validation", "inventory management"]
+    },
+    {
+      "service": "payment-service", 
+      "blocking": ["order completion", "payment processing"]
+    },
+    {
+      "component": "event_system",
+      "blocking": ["async communication", "eventual consistency"]
+    },
+    {
+      "component": "circuit_breakers",
+      "blocking": ["resilience patterns", "graceful degradation"]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+_format_version: "3.0"
+
+services:
+  - name: user-service
+    url: http://user-service:8080
+    routes:
+      - name: user-api
+        paths:
+          - /api/v1/users
+
+  - name: product-service
+    url: http://product-service:8080
+    routes:
+      - name: product-api
+        paths:
+          - /api/v1/products
+
+  - name: order-service
+    url: http://order-service:8080
+    routes:
+      - name: order-api
+        paths:
+          - /api/v1/orders
+
+plugins:
+  - name: rate-limiting
+    config:
+      minute: 1000
+      hour: 10000
+  
+  - name: jwt
+    config:
+      secret_is_base64: false
+      key_claim_name: iss
