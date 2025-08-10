@@ -479,6 +479,37 @@ Every context management technique involves tradeoffs. Understanding them is cri
 - Keep architectural decisions in main conversation
 - Delegate implementation details, retain design control
 
+## Context Management Summary
+
+```mermaid 
+flowchart TD
+    Start([New Development Task]) --> Type{Task Type?}
+    
+    Type -->|Bug Fix| Small[Load specific files<br/>@path/to/file.java]
+    Type -->|Feature| Medium[Load service context<br/>@service/CLAUDE.md]
+    Type -->|Cross-Service| Large[Load project context<br/>@CLAUDE.md + @docs/]
+    
+    Small --> Work
+    Medium --> Special{Need<br/>Specialist?}
+    Large --> Special
+    
+    Special -->|Yes| Subagent[Delegate to subagent<br/>• database-expert<br/>• security-reviewer]
+    Special -->|No| Work[Begin Development]
+    
+    Subagent --> Work
+    
+    Work --> Monitor{Context<br/>Full?}
+    Monitor -->|Yes| Compact[compact]
+    Monitor -->|No| Done([Complete])
+    
+    Compact --> Done
+    
+    style Start fill:#e8eaf6
+    style Done fill:#c8e6c9
+    style Subagent fill:#fff3e0
+    style Compact fill:#ffecb3
+```
+
 ## Troubleshooting Common Issues
 
 ### Context Overflow
